@@ -15,6 +15,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import model.User;
+
 public class RequestHandler extends Thread {
 	private static final Logger log = LoggerFactory.getLogger(RequestHandler.class);
 
@@ -30,20 +32,19 @@ public class RequestHandler extends Thread {
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-        	Map<String, String> headerMap = new HashMap<>();
+        	RequestDispatcher requestDispatcher = new RequestDispatcher();
+        	Map<String, String> headersMap = new HashMap<>();
             DataOutputStream dos = new DataOutputStream(out);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String lineMsg;
-            
             String[] requestLineTokens = br.readLine().split(" ");
+            String url = requestLineTokens[1];
+            Controller controller = requestDispatcher.disptach(url);
+            int splitIndex = url.indexOf("?");
+            String requestPath = url.substring(0, splitIndex);
+            String params = url.substring(splitIndex + 1);
+            User user = createUser(params);
+            putHeaderTokens(headersMap, br);
             
-            while (!"".equals((lineMsg = br.readLine()))) {
-            	if (lineMsg == null) {
-            		return;
-            	}
-				String[] perHeader = perHeaderGenerate(lineMsg);
-				headerMap.put(perHeader[0], perHeader[1]);
-			}
             
             byte[] body = Files.readAllBytes(new File("./webapp" + requestLineTokens[1]).toPath());
             response200Header(dos, body.length);
@@ -52,6 +53,29 @@ public class RequestHandler extends Thread {
             log.error(e.getMessage());
         }
     }
+
+	private User createUser(String params) {
+		String[] paramTokens = params.split("&");
+		Map<String, String> paramMap = new HashMap<>();
+		
+		for (String paramToken : paramTokens) {
+			String[] paramKeyValue = paramToken.split("=");
+			paramMap.put(paramKeyValue[0], paramKeyValue[1]);
+		}
+		
+		return new User(paramMap.get("userId"), paramMap.get("password"), paramMap.get("name"), paramMap.get("email"));
+	}
+
+	private void putHeaderTokens(Map<String, String> headerMap, BufferedReader br) throws IOException {
+		String lineMsg;
+		while (!"".equals((lineMsg = br.readLine()))) {
+			if (lineMsg == null) {
+				return;
+			}
+			String[] perHeader = perHeaderGenerate(lineMsg);
+			headerMap.put(perHeader[0], perHeader[1]);
+		}
+	}
 	
 	public String[] perHeaderGenerate(String lineMsg) {
 		int splitIndex = lineMsg.indexOf(":");
