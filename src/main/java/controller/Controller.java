@@ -21,6 +21,16 @@ public interface Controller {
 			log.error(e.getMessage());
 		}
 	}
+	
+	default void response302(DataOutputStream dos) {
+		try {
+			dos.writeBytes("HTTP/1.1 302 Found \r\n");
+			dos.writeBytes("Location: http://localhost:7070/index.html\r\n");
+			dos.writeBytes("\r\n");
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		}
+	}
 
 	default void responseBody(DataOutputStream dos, byte[] body) {
 		try {

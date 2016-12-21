@@ -27,6 +27,7 @@ public class SignUpController extends ServiceController {
 			return;
 		}
 		addUser(createUser(body));
+		response302(dos);
 	}
 	
 	private User createUser(String queryString) {
