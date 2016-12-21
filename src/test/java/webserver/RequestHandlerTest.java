@@ -17,13 +17,4 @@ public class RequestHandlerTest {
 		mockSocket = mock(Socket.class);
 		requestHandler = new RequestHandler(mockSocket);
 	}
-	
-	@Test
-	public void perHeaderGenerate() {
-		String[] result = requestHandler.perHeaderGenerate("key: value");
-		assertEquals(result[0], "key");
-		assertEquals(result[1], "value");
-		System.out.println(result[0]);
-		System.out.println(result[1]);
-	}
 }
