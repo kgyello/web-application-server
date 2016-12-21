@@ -48,7 +48,7 @@ public class HttpRequestUtils {
 
         return new Pair(tokens[0], tokens[1]);
     }
-
+    
     public static Pair parseHeader(String header) {
         return getKeyValue(header, ": ");
     }
