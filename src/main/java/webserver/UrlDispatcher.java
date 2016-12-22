@@ -4,10 +4,12 @@ import java.io.DataOutputStream;
 import java.util.Map;
 
 import controller.Controller;
+import controller.ListController;
+import controller.LoginController;
 import controller.ShowController;
 import controller.SignUpController;
 
-public class RequestDispatcher {
+public class UrlDispatcher {
 //	private static final Logger log = LoggerFactory.getLogger(RequestDispatcher.class);
 
 	public static Controller disptach(String requestLine, Map<String, String> headers, String body, DataOutputStream dos) {
@@ -25,8 +27,16 @@ public class RequestDispatcher {
 		
 		if ("/user/create".equals(requestPath)) {
 			return new SignUpController(requestPath, dos, httpMethod, queryString, body);
+		} 
+		
+		if ("/user/login".equals(requestPath)) {
+			return new LoginController(requestPath, dos, body, headers);
 		}
-
-		return new ShowController(requestPath, dos);
+		
+		if ("/user/list".equals(requestPath)) {
+			return new ListController(requestPath, dos, headers);
+		}
+			
+		return new ShowController(requestPath, dos, headers);
 	}
 }

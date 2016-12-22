@@ -10,7 +10,7 @@ import com.google.common.collect.Maps;
 
 import util.HttpRequestUtils;
 import util.HttpRequestUtils.Pair;
-import webserver.RequestDispatcher;
+import webserver.UrlDispatcher;
 import util.IOUtils;
 
 public class FrontController implements Controller {
@@ -30,7 +30,7 @@ public class FrontController implements Controller {
 		headers = generateHeaders(br);
 		body = generateBody(br);
 		
-		Controller controller = RequestDispatcher.disptach(requestLine, headers, body, dos);
+		Controller controller = UrlDispatcher.disptach(requestLine, headers, body, dos);
 		if (controller == null) {
 			return;
 		}
@@ -45,7 +45,7 @@ public class FrontController implements Controller {
 			if (header == null) {
 				return headers;
 			}
-			log.info("header : {}", header);
+//			log.info("header : {}", header);
 			Pair pair = HttpRequestUtils.parseHeader(header);
 			headers.put(pair.getKey(), pair.getValue());
 		}
@@ -56,7 +56,7 @@ public class FrontController implements Controller {
 	private String generateBody(BufferedReader br) throws IOException {
 		String ContentLength = headers.get("Content-Length");
 		if (ContentLength == null) {
-			log.info("requestBody is empty");
+//			log.info("requestBody is empty");
 			return null;
 		}
 		String body = IOUtils.readData(br, Integer.parseInt(ContentLength));

@@ -27,7 +27,7 @@ public class SignUpController extends ServiceController {
 			return;
 		}
 		addUser(createUser(body));
-		response302(dos);
+		response302(dos, "/index.html", false);
 	}
 	
 	private User createUser(String queryString) {
